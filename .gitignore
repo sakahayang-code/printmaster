@@ -3,6 +3,7 @@
 .mariadb_data/
 .gemini
 .local/
+sakahayang-code/
 bin/
 upload/
 PrintMaster_Blueprint_Teknis_Lengkap.docx
@@ -22,3 +23,11 @@ storage/cache/*
 # Uploads
 public/uploads/*
 !public/uploads/.gitkeep
+
+# Environment & Local Configuration Overrides
+.env
+config/database.local.php
+
+# Backups (SQL dumps)
+storage/backups/*
+!storage/backups/.gitkeep

@@ -205,9 +205,13 @@ function isActive($path, $current) {
         </a>
         <?php endif; ?>
         <?php if (Auth::hasPermission('audit.view')): ?>
+        <a href="/backup" class="nav-link-pm <?= isActive('/backup', $uri) ?>">
+            <i class="bi bi-database-check text-warning"></i>
+            <span>Cadangan & Pemulihan</span>
+        </a>
         <a href="/audit-logs" class="nav-link-pm <?= isActive('/audit-logs', $uri) ?>">
             <i class="bi bi-activity"></i>
-            <span>Audit Trail & Backup</span>
+            <span>Audit Trail</span>
         </a>
         <?php endif; ?>
     </div>

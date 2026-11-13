@@ -91,7 +91,8 @@ $moduleEndpoints = [
     '/whatsapp'             => 'WhatsApp Gateway Simulator',
     '/branches'             => 'Manajemen Cabang',
     '/users'                => 'Pengguna & Hak Akses',
-    '/audit-logs'           => 'Audit Trail'
+    '/audit-logs'           => 'Audit Trail',
+    '/backup'               => 'Cadangan & Pemulihan Basis Data'
 ];
 
 foreach ($moduleEndpoints as $path => $desc) {

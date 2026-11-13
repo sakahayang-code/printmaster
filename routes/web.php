@@ -203,4 +203,10 @@ Router::post('/users/store', [CompanyController::class, 'storeUser'], [AuthMiddl
 Router::post('/users/{id}/toggle', [CompanyController::class, 'toggleUser'], [AuthMiddleware::class]);
 Router::post('/users/{id}/reset-password', [CompanyController::class, 'resetPassword'], [AuthMiddleware::class]);
 Router::get('/audit-logs', [CompanyController::class, 'auditLogs'], [AuthMiddleware::class]);
+Router::get('/backup', [CompanyController::class, 'backupIndex'], [AuthMiddleware::class]);
+Router::post('/backup/create', [CompanyController::class, 'createBackup'], [AuthMiddleware::class]);
+Router::get('/backup/file/{file}', [CompanyController::class, 'downloadFile'], [AuthMiddleware::class]);
+Router::post('/backup/delete', [CompanyController::class, 'deleteBackupFile'], [AuthMiddleware::class]);
+Router::post('/backup/restore', [CompanyController::class, 'restoreBackup'], [AuthMiddleware::class]);
+Router::post('/backup/migrate', [CompanyController::class, 'runMigrations'], [AuthMiddleware::class]);
 Router::get('/backup/download', [CompanyController::class, 'downloadBackup'], [AuthMiddleware::class]);

@@ -12,7 +12,8 @@ class Database {
     public static function getConnection(): PDO {
         if (self::$instance === null) {
             $c = DBConfig::getConfig();
-            $dsn = "mysql:host={$c['host']};port={$c['port']};dbname={$c['database']};charset={$c['charset']}";
+            $socketPart = (file_exists('/tmp/mysql.sock') && ($c['host'] === '127.0.0.1' || $c['host'] === 'localhost')) ? ";unix_socket=/tmp/mysql.sock" : "";
+            $dsn = "mysql:host={$c['host']};port={$c['port']};dbname={$c['database']};charset={$c['charset']}{$socketPart}";
             try {
                 self::$instance = new PDO($dsn, $c['username'], $c['password'], $c['options']);
             } catch (Exception $e) {

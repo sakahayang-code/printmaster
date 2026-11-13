@@ -5,21 +5,20 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 1. COMPANIES & BRANCHES
-DROP TABLE IF EXISTS company_settings;
-DROP TABLE IF EXISTS branch_settings;
-DROP TABLE IF EXISTS user_branches;
-DROP TABLE IF EXISTS login_attempts;
-DROP TABLE IF EXISTS audit_logs;
-DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS cash_registers;
-DROP TABLE IF EXISTS warehouses;
-DROP TABLE IF EXISTS branches;
-DROP TABLE IF EXISTS companies;
-
-CREATE TABLE companies (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS companies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
     name VARCHAR(150) NOT NULL,
@@ -36,7 +35,7 @@ CREATE TABLE companies (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE company_settings (
+CREATE TABLE IF NOT EXISTS company_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     setting_key VARCHAR(100) NOT NULL,
@@ -47,7 +46,7 @@ CREATE TABLE company_settings (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE branches (
+CREATE TABLE IF NOT EXISTS branches (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(30) NOT NULL,
@@ -65,7 +64,7 @@ CREATE TABLE branches (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE branch_settings (
+CREATE TABLE IF NOT EXISTS branch_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     branch_id INT NOT NULL,
     setting_key VARCHAR(100) NOT NULL,
@@ -76,7 +75,7 @@ CREATE TABLE branch_settings (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE warehouses (
+CREATE TABLE IF NOT EXISTS warehouses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -90,7 +89,7 @@ CREATE TABLE warehouses (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE cash_registers (
+CREATE TABLE IF NOT EXISTS cash_registers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -104,7 +103,7 @@ CREATE TABLE cash_registers (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 2. ROLES, USERS, PERMISSIONS & AUDIT
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     display_name VARCHAR(100) NOT NULL,
@@ -114,7 +113,7 @@ CREATE TABLE roles (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE permissions (
+CREATE TABLE IF NOT EXISTS permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(100) NOT NULL UNIQUE,
     module VARCHAR(50) NOT NULL,
@@ -122,7 +121,7 @@ CREATE TABLE permissions (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE role_permissions (
+CREATE TABLE IF NOT EXISTS role_permissions (
     role_id INT NOT NULL,
     permission_id INT NOT NULL,
     PRIMARY KEY (role_id, permission_id),
@@ -130,7 +129,7 @@ CREATE TABLE role_permissions (
     FOREIGN KEY (permission_id) REFERENCES permissions(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NULL,
@@ -150,7 +149,7 @@ CREATE TABLE users (
     FOREIGN KEY (role_id) REFERENCES roles(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE user_branches (
+CREATE TABLE IF NOT EXISTS user_branches (
     user_id INT NOT NULL,
     branch_id INT NOT NULL,
     PRIMARY KEY (user_id, branch_id),
@@ -158,7 +157,7 @@ CREATE TABLE user_branches (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE audit_logs (
+CREATE TABLE IF NOT EXISTS audit_logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NULL,
     branch_id INT NULL,
@@ -176,7 +175,7 @@ CREATE TABLE audit_logs (
     INDEX idx_audit_user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE login_attempts (
+CREATE TABLE IF NOT EXISTS login_attempts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     ip_address VARCHAR(45) NOT NULL,
     username VARCHAR(100) NOT NULL,
@@ -185,10 +184,9 @@ CREATE TABLE login_attempts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 3. CUSTOMERS & CRM
-DROP TABLE IF EXISTS customer_addresses;
-DROP TABLE IF EXISTS customers;
-
-CREATE TABLE customers (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NULL,
@@ -215,7 +213,7 @@ CREATE TABLE customers (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE customer_addresses (
+CREATE TABLE IF NOT EXISTS customer_addresses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     label VARCHAR(50) DEFAULT 'Utama',
@@ -230,13 +228,12 @@ CREATE TABLE customer_addresses (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 4. PRODUCTS & CATALOG
-DROP TABLE IF EXISTS product_materials;
-DROP TABLE IF EXISTS product_variants;
-DROP TABLE IF EXISTS product_finishing;
-DROP TABLE IF EXISTS products;
-DROP TABLE IF EXISTS product_categories;
-
-CREATE TABLE product_categories (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS product_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(50) NOT NULL,
@@ -251,7 +248,7 @@ CREATE TABLE product_categories (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     category_id INT NOT NULL,
@@ -275,7 +272,7 @@ CREATE TABLE products (
     FOREIGN KEY (category_id) REFERENCES product_categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE product_variants (
+CREATE TABLE IF NOT EXISTS product_variants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -287,7 +284,7 @@ CREATE TABLE product_variants (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE product_finishing (
+CREATE TABLE IF NOT EXISTS product_finishing (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(50) NOT NULL,
@@ -302,14 +299,13 @@ CREATE TABLE product_finishing (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 5. MATERIALS & INVENTORY
-DROP TABLE IF EXISTS stock_transfer_items;
-DROP TABLE IF EXISTS stock_transfers;
-DROP TABLE IF EXISTS stock_opname_items;
-DROP TABLE IF EXISTS stock_opnames;
-DROP TABLE IF EXISTS stock_movements;
-DROP TABLE IF EXISTS materials;
-
-CREATE TABLE materials (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS materials (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(50) NOT NULL,
@@ -327,7 +323,7 @@ CREATE TABLE materials (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE product_materials (
+CREATE TABLE IF NOT EXISTS product_materials (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -337,7 +333,7 @@ CREATE TABLE product_materials (
     FOREIGN KEY (material_id) REFERENCES materials(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE stock_movements (
+CREATE TABLE IF NOT EXISTS stock_movements (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -360,7 +356,7 @@ CREATE TABLE stock_movements (
     FOREIGN KEY (material_id) REFERENCES materials(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE stock_transfers (
+CREATE TABLE IF NOT EXISTS stock_transfers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     from_branch_id INT NOT NULL,
@@ -384,7 +380,7 @@ CREATE TABLE stock_transfers (
     FOREIGN KEY (to_warehouse_id) REFERENCES warehouses(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE stock_transfer_items (
+CREATE TABLE IF NOT EXISTS stock_transfer_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     stock_transfer_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -396,7 +392,7 @@ CREATE TABLE stock_transfer_items (
     FOREIGN KEY (material_id) REFERENCES materials(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE stock_opnames (
+CREATE TABLE IF NOT EXISTS stock_opnames (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -413,7 +409,7 @@ CREATE TABLE stock_opnames (
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE stock_opname_items (
+CREATE TABLE IF NOT EXISTS stock_opname_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     stock_opname_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -427,13 +423,12 @@ CREATE TABLE stock_opname_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 6. SUPPLIERS & PURCHASING
-DROP TABLE IF EXISTS goods_receipt_items;
-DROP TABLE IF EXISTS goods_receipts;
-DROP TABLE IF EXISTS purchase_order_items;
-DROP TABLE IF EXISTS purchase_orders;
-DROP TABLE IF EXISTS suppliers;
-
-CREATE TABLE suppliers (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(50) NOT NULL,
@@ -451,7 +446,7 @@ CREATE TABLE suppliers (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE purchase_orders (
+CREATE TABLE IF NOT EXISTS purchase_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -476,7 +471,7 @@ CREATE TABLE purchase_orders (
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE purchase_order_items (
+CREATE TABLE IF NOT EXISTS purchase_order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -489,7 +484,7 @@ CREATE TABLE purchase_order_items (
     FOREIGN KEY (material_id) REFERENCES materials(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE goods_receipts (
+CREATE TABLE IF NOT EXISTS goods_receipts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     purchase_order_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -505,7 +500,7 @@ CREATE TABLE goods_receipts (
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE goods_receipt_items (
+CREATE TABLE IF NOT EXISTS goods_receipt_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     goods_receipt_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -517,11 +512,10 @@ CREATE TABLE goods_receipt_items (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 7. MACHINES & MAINTENANCE
-DROP TABLE IF EXISTS machine_usage_logs;
-DROP TABLE IF EXISTS machine_maintenance;
-DROP TABLE IF EXISTS machines;
-
-CREATE TABLE machines (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS machines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -543,7 +537,7 @@ CREATE TABLE machines (
     FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE machine_maintenance (
+CREATE TABLE IF NOT EXISTS machine_maintenance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     machine_id INT NOT NULL,
     maintenance_date DATE NOT NULL,
@@ -557,21 +551,20 @@ CREATE TABLE machine_maintenance (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 8. QUOTES, ORDERS & CASHIER
-DROP TABLE IF EXISTS delivery_orders;
-DROP TABLE IF EXISTS quality_checks;
-DROP TABLE IF EXISTS production_reprints;
-DROP TABLE IF EXISTS production_materials;
-DROP TABLE IF EXISTS production_steps;
-DROP TABLE IF EXISTS production_jobs;
-DROP TABLE IF EXISTS design_revisions;
-DROP TABLE IF EXISTS order_files;
-DROP TABLE IF EXISTS order_status_history;
-DROP TABLE IF EXISTS order_items;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS quote_items;
-DROP TABLE IF EXISTS quotes;
-
-CREATE TABLE quotes (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS quotes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -592,7 +585,7 @@ CREATE TABLE quotes (
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE quote_items (
+CREATE TABLE IF NOT EXISTS quote_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     quote_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -612,7 +605,7 @@ CREATE TABLE quote_items (
     FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -659,7 +652,7 @@ CREATE TABLE orders (
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE order_items (
+CREATE TABLE IF NOT EXISTS order_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -684,7 +677,7 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE order_status_history (
+CREATE TABLE IF NOT EXISTS order_status_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     old_status VARCHAR(50) NULL,
@@ -695,7 +688,7 @@ CREATE TABLE order_status_history (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE order_files (
+CREATE TABLE IF NOT EXISTS order_files (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     order_item_id INT NULL,
@@ -713,7 +706,7 @@ CREATE TABLE order_files (
     FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE design_revisions (
+CREATE TABLE IF NOT EXISTS design_revisions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     version_number INT DEFAULT 1,
@@ -729,7 +722,7 @@ CREATE TABLE design_revisions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 9. PRODUCTION & QUALITY CONTROL
-CREATE TABLE production_jobs (
+CREATE TABLE IF NOT EXISTS production_jobs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     source_branch_id INT NOT NULL,
@@ -758,7 +751,7 @@ CREATE TABLE production_jobs (
     FOREIGN KEY (operator_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE production_steps (
+CREATE TABLE IF NOT EXISTS production_steps (
     id INT AUTO_INCREMENT PRIMARY KEY,
     production_job_id INT NOT NULL,
     step_name ENUM('prepress', 'printing', 'cutting', 'laminating', 'binding', 'finishing', 'packing') NOT NULL,
@@ -772,7 +765,7 @@ CREATE TABLE production_steps (
     FOREIGN KEY (operator_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE production_materials (
+CREATE TABLE IF NOT EXISTS production_materials (
     id INT AUTO_INCREMENT PRIMARY KEY,
     production_job_id INT NOT NULL,
     material_id INT NOT NULL,
@@ -787,7 +780,7 @@ CREATE TABLE production_materials (
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE quality_checks (
+CREATE TABLE IF NOT EXISTS quality_checks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     production_job_id INT NOT NULL,
     inspector_id INT NOT NULL,
@@ -802,7 +795,7 @@ CREATE TABLE quality_checks (
     FOREIGN KEY (inspector_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE production_reprints (
+CREATE TABLE IF NOT EXISTS production_reprints (
     id INT AUTO_INCREMENT PRIMARY KEY,
     original_job_id INT NOT NULL,
     new_job_id INT NULL,
@@ -818,14 +811,13 @@ CREATE TABLE production_reprints (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 10. PAYMENTS, CASH SHIFTS & ACCOUNTING
-DROP TABLE IF EXISTS expenses;
-DROP TABLE IF EXISTS journal_details;
-DROP TABLE IF EXISTS journals;
-DROP TABLE IF EXISTS accounts;
-DROP TABLE IF EXISTS payments;
-DROP TABLE IF EXISTS cash_shifts;
-
-CREATE TABLE cash_shifts (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS cash_shifts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     branch_id INT NOT NULL,
     cash_register_id INT NOT NULL,
@@ -847,7 +839,7 @@ CREATE TABLE cash_shifts (
     FOREIGN KEY (user_id) REFERENCES users(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -874,7 +866,7 @@ CREATE TABLE payments (
     FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE accounts (
+CREATE TABLE IF NOT EXISTS accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(30) NOT NULL,
@@ -890,7 +882,7 @@ CREATE TABLE accounts (
     FOREIGN KEY (parent_id) REFERENCES accounts(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE journals (
+CREATE TABLE IF NOT EXISTS journals (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -909,7 +901,7 @@ CREATE TABLE journals (
     FOREIGN KEY (branch_id) REFERENCES branches(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE journal_details (
+CREATE TABLE IF NOT EXISTS journal_details (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     journal_id INT NOT NULL,
     account_id INT NOT NULL,
@@ -920,7 +912,7 @@ CREATE TABLE journal_details (
     FOREIGN KEY (account_id) REFERENCES accounts(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE expenses (
+CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -942,13 +934,12 @@ CREATE TABLE expenses (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 11. HR, ATTENDANCE, PAYROLL & DELIVERY
-DROP TABLE IF EXISTS payrolls;
-DROP TABLE IF EXISTS leave_requests;
-DROP TABLE IF EXISTS employee_attendance;
-DROP TABLE IF EXISTS employee_shifts;
-DROP TABLE IF EXISTS employees;
-
-CREATE TABLE employees (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS employees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -974,7 +965,7 @@ CREATE TABLE employees (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE employee_shifts (
+CREATE TABLE IF NOT EXISTS employee_shifts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -985,7 +976,7 @@ CREATE TABLE employee_shifts (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE employee_attendance (
+CREATE TABLE IF NOT EXISTS employee_attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -1002,7 +993,7 @@ CREATE TABLE employee_attendance (
     FOREIGN KEY (branch_id) REFERENCES branches(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE leave_requests (
+CREATE TABLE IF NOT EXISTS leave_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     employee_id INT NOT NULL,
     leave_type ENUM('annual', 'sick', 'permission', 'special') DEFAULT 'annual',
@@ -1016,7 +1007,7 @@ CREATE TABLE leave_requests (
     FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE payrolls (
+CREATE TABLE IF NOT EXISTS payrolls (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -1039,7 +1030,7 @@ CREATE TABLE payrolls (
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE delivery_orders (
+CREATE TABLE IF NOT EXISTS delivery_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NOT NULL,
@@ -1066,13 +1057,12 @@ CREATE TABLE delivery_orders (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 12. PROMOTIONS, REVIEWS & SYSTEM LOGS
-DROP TABLE IF EXISTS customer_reviews;
-DROP TABLE IF EXISTS promotions;
-DROP TABLE IF EXISTS notification_logs;
-DROP TABLE IF EXISTS notification_templates;
-DROP TABLE IF EXISTS backup_logs;
-
-CREATE TABLE promotions (
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+-- [SAFEGUARDED] DROP TABLE suppressed to protect existing live data
+CREATE TABLE IF NOT EXISTS promotions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     code VARCHAR(50) NOT NULL UNIQUE,
@@ -1090,7 +1080,7 @@ CREATE TABLE promotions (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE customer_reviews (
+CREATE TABLE IF NOT EXISTS customer_reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     customer_id INT NOT NULL,
@@ -1101,7 +1091,7 @@ CREATE TABLE customer_reviews (
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE notification_templates (
+CREATE TABLE IF NOT EXISTS notification_templates (
     id INT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     event_code VARCHAR(80) NOT NULL,
@@ -1114,7 +1104,7 @@ CREATE TABLE notification_templates (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE notification_logs (
+CREATE TABLE IF NOT EXISTS notification_logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     company_id INT NOT NULL,
     branch_id INT NULL,
@@ -1129,7 +1119,7 @@ CREATE TABLE notification_logs (
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE backup_logs (
+CREATE TABLE IF NOT EXISTS backup_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     filename VARCHAR(255) NOT NULL,
     file_size BIGINT DEFAULT 0,

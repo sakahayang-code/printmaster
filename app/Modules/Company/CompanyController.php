@@ -7,6 +7,7 @@ use App\Core\Auth;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Core\Migrator;
 
 class CompanyController extends Controller {
 
@@ -221,28 +222,248 @@ class CompanyController extends Controller {
         ]);
     }
 
+    // ==========================================
+    // 4. DATABASE BACKUP & RESTORE MANAGER
+    // ==========================================
+    public function backupIndex() {
+        Auth::requirePermission('audit.view');
+
+        // Database statistics
+        $dbConfig = \App\Config\Database::getConfig();
+        $dbName = $dbConfig['database'];
+
+        $tables = Database::fetchAll("SHOW TABLES");
+        $tableCount = count($tables);
+
+        $sizeRow = Database::fetch("
+            SELECT 
+                COUNT(*) as table_count,
+                ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS total_size_mb,
+                SUM(table_rows) as approx_rows
+            FROM information_schema.tables 
+            WHERE table_schema = :dbname
+        ", ['dbname' => $dbName]);
+
+        $backupDir = dirname(__DIR__, 3) . '/storage/backups';
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        $files = glob($backupDir . '/*.sql');
+        $backups = [];
+        foreach ($files as $file) {
+            $backups[] = [
+                'filename'   => basename($file),
+                'size_bytes' => filesize($file),
+                'size_human' => round(filesize($file) / 1024 / 1024, 2) . ' MB (' . round(filesize($file) / 1024) . ' KB)',
+                'created_at' => date('Y-m-d H:i:s', filemtime($file)),
+                'is_auto'    => strpos(basename($file), '_auto_') !== false
+            ];
+        }
+
+        // Sort backups newest first
+        usort($backups, function($a, $b) {
+            return strcmp($b['created_at'], $a['created_at']);
+        });
+
+        // Migrations info
+        $pendingMigrations = Migrator::getPendingMigrations();
+        $executedMigrations = Migrator::getExecutedMigrations();
+
+        $this->view('company/backup', [
+            'title'              => 'Cadangan & Pemulihan Basis Data (Backup & Restore)',
+            'tableCount'         => $tableCount,
+            'totalSizeMb'        => $sizeRow['total_size_mb'] ?? '0.00',
+            'approxRows'         => $sizeRow['approx_rows'] ?? 0,
+            'backups'            => $backups,
+            'pendingMigrations'  => $pendingMigrations,
+            'executedMigrations' => $executedMigrations,
+            'dbName'             => $dbName
+        ]);
+    }
+
+    public function createBackup() {
+        Auth::requirePermission('audit.view');
+        $this->validateCSRF();
+
+        $backupDir = dirname(__DIR__, 3) . '/storage/backups';
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+
+        $sqlDump = $this->generateSqlDump();
+        $filename = 'printmaster_backup_' . date('Ymd_His') . '.sql';
+        $filePath = $backupDir . '/' . $filename;
+
+        file_put_contents($filePath, $sqlDump);
+
+        Database::insert('audit_logs', [
+            'company_id' => 1,
+            'branch_id'  => Auth::activeBranchId(),
+            'user_id'    => Auth::id(),
+            'action'     => 'backup_database',
+            'entity'     => 'database',
+            'entity_id'  => 0,
+            'new_values' => json_encode(['file' => $filename, 'size' => filesize($filePath)]),
+            'ip_address' => Request::ip()
+        ]);
+
+        Session::flash('success', "Cadangan basis data berhasil dibuat: {$filename} (" . round(filesize($filePath)/1024, 1) . " KB)");
+        Response::redirect('/backup');
+    }
+
+    public function downloadFile(string $file) {
+        Auth::requirePermission('audit.view');
+
+        $cleanFile = basename($file);
+        $filePath = dirname(__DIR__, 3) . '/storage/backups/' . $cleanFile;
+
+        if (!file_exists($filePath)) {
+            Session::flash('error', 'Berkas cadangan tidak ditemukan.');
+            Response::redirect('/backup');
+        }
+
+        header('Content-Type: application/sql');
+        header('Content-Disposition: attachment; filename="' . $cleanFile . '"');
+        header('Content-Length: ' . filesize($filePath));
+        readfile($filePath);
+        exit;
+    }
+
+    public function deleteBackupFile() {
+        Auth::requirePermission('audit.view');
+        $this->validateCSRF();
+
+        $file = basename(Request::input('filename', ''));
+        $filePath = dirname(__DIR__, 3) . '/storage/backups/' . $file;
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+            Session::flash('success', "Berkas cadangan {$file} berhasil dihapus.");
+        } else {
+            Session::flash('error', 'Berkas tidak ditemukan.');
+        }
+
+        Response::redirect('/backup');
+    }
+
+    public function restoreBackup() {
+        Auth::requirePermission('company.manage');
+        $this->validateCSRF();
+
+        $sqlContent = '';
+        $sourceName = '';
+
+        // Check if uploaded file
+        $file = Request::file('sql_file');
+        if ($file && !empty($file['tmp_name']) && is_uploaded_file($file['tmp_name'])) {
+            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            if ($ext !== 'sql') {
+                Session::flash('error', 'Format berkas tidak valid. Harap unggah berkas .sql');
+                Response::redirect('/backup');
+            }
+            $sqlContent = file_get_contents($file['tmp_name']);
+            $sourceName = $file['name'];
+        } elseif ($existingFile = Request::input('existing_file')) {
+            $cleanFile = basename($existingFile);
+            $filePath = dirname(__DIR__, 3) . '/storage/backups/' . $cleanFile;
+            if (file_exists($filePath)) {
+                $sqlContent = file_get_contents($filePath);
+                $sourceName = $cleanFile;
+            }
+        }
+
+        if (empty(trim($sqlContent))) {
+            Session::flash('error', 'Tidak ada data SQL yang dapat dipulihkan.');
+            Response::redirect('/backup');
+        }
+
+        try {
+            // Disable foreign key checks during restore
+            Database::getPdo()->exec("SET FOREIGN_KEY_CHECKS=0;");
+
+            // Execute SQL script
+            Database::getPdo()->exec($sqlContent);
+
+            Database::getPdo()->exec("SET FOREIGN_KEY_CHECKS=1;");
+
+            Database::insert('audit_logs', [
+                'company_id' => 1,
+                'branch_id'  => Auth::activeBranchId(),
+                'user_id'    => Auth::id(),
+                'action'     => 'restore_database',
+                'entity'     => 'database',
+                'entity_id'  => 0,
+                'new_values' => json_encode(['source' => $sourceName]),
+                'ip_address' => Request::ip()
+            ]);
+
+            Session::flash('success', "Basis data berhasil dipulihkan dari cadangan: {$sourceName}!");
+        } catch (\Exception $e) {
+            Database::getPdo()->exec("SET FOREIGN_KEY_CHECKS=1;");
+            Session::flash('error', "Gagal memulihkan basis data: " . $e->getMessage());
+        }
+
+        Response::redirect('/backup');
+    }
+
+    public function runMigrations() {
+        Auth::requirePermission('company.manage');
+        $this->validateCSRF();
+
+        $res = Migrator::run();
+        if ($res['status'] === 'success') {
+            Session::flash('success', $res['message']);
+        } elseif ($res['status'] === 'empty') {
+            Session::flash('info', $res['message']);
+        } else {
+            Session::flash('error', $res['message']);
+        }
+
+        Response::redirect('/backup');
+    }
+
     public function downloadBackup() {
         Auth::requirePermission('audit.view');
 
-        // Simple database backup dump for shared hosting
+        $sqlDump = $this->generateSqlDump();
+
+        header('Content-Type: application/sql');
+        header('Content-Disposition: attachment; filename="printmaster_backup_' . date('Ymd_His') . '.sql"');
+        echo $sqlDump;
+        exit;
+    }
+
+    private function generateSqlDump(): string {
         $tables = Database::fetchAll("SHOW TABLES");
-        $tableKey = 'Tables_in_printmaster';
+        $tableKey = array_key_first($tables[0] ?? ['Tables_in_printmaster' => '']);
         
-        $sqlDump = "-- PRINTMASTER DATABASE BACKUP\n-- Generated: " . date('Y-m-d H:i:s') . "\n-- Host: Shared Hosting Compatible\n\nSET FOREIGN_KEY_CHECKS=0;\n\n";
+        $sqlDump = "-- ====================================================\n";
+        $sqlDump .= "-- PRINTMASTER DATABASE BACKUP (SAFE / NON-DESTRUCTIVE)\n";
+        $sqlDump .= "-- Generated: " . date('Y-m-d H:i:s') . "\n";
+        $sqlDump .= "-- Host: Shared Hosting Compatible\n";
+        $sqlDump .= "-- Catatan: Menggunakan CREATE TABLE IF NOT EXISTS\n";
+        $sqlDump .= "-- ====================================================\n\n";
+        $sqlDump .= "SET FOREIGN_KEY_CHECKS=0;\n";
+        $sqlDump .= "SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO';\n\n";
 
         foreach ($tables as $tRow) {
             $table = $tRow[$tableKey];
             $createTable = Database::fetch("SHOW CREATE TABLE `{$table}`");
-            $sqlDump .= "DROP TABLE IF EXISTS `{$table}`;\n";
-            $sqlDump .= $createTable['Create Table'] . ";\n\n";
+            $createSql = $createTable['Create Table'] ?? '';
+            // Safe non-destructive CREATE TABLE
+            $createSql = preg_replace('/CREATE TABLE\s+(?!IF NOT EXISTS)/i', 'CREATE TABLE IF NOT EXISTS ', $createSql);
+
+            $sqlDump .= "-- Struktur tabel: `{$table}`\n";
+            $sqlDump .= $createSql . ";\n\n";
 
             $rows = Database::fetchAll("SELECT * FROM `{$table}`");
             if (!empty($rows)) {
-                $sqlDump .= "INSERT INTO `{$table}` VALUES\n";
+                $sqlDump .= "INSERT IGNORE INTO `{$table}` VALUES\n";
                 $rowStrings = [];
                 foreach ($rows as $row) {
                     $vals = array_map(function($v) {
-                        return $v === null ? "NULL" : "'" . addslashes($v) . "'";
+                        return $v === null ? "NULL" : "'" . addslashes((string)$v) . "'";
                     }, array_values($row));
                     $rowStrings[] = "(" . implode(", ", $vals) . ")";
                 }
@@ -251,9 +472,6 @@ class CompanyController extends Controller {
         }
         $sqlDump .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
-        header('Content-Type: application/sql');
-        header('Content-Disposition: attachment; filename="printmaster_backup_' . date('Ymd_His') . '.sql"');
-        echo $sqlDump;
-        exit;
+        return $sqlDump;
     }
 }

@@ -56,6 +56,7 @@ Dokumentasi teknis dan operasional lengkap tersedia di direktori `docs/`:
 6. [**Panduan Peran Pengguna (Roles)**](file:///home/antigravity/docs/USER_ROLES_GUIDE.md): Matriks hak akses RBAC dan alur kerja harian masing-masing jabatan.
 7. [**Daftar Akun Pengujian**](file:///home/antigravity/docs/TEST_ACCOUNTS.md): Tabel 16 akun pengujian default dan skenario uji verifikasi.
 8. [**Matriks Verifikasi Modul**](file:///home/antigravity/docs/FEATURE_CHECKLIST.md): Daftar periksa kelengkapan 21 modul sesuai spesifikasi blueprint.
+9. [**Panduan Perlindungan Data & Pembaruan Aman**](file:///home/antigravity/docs/DATA_PROTECTION_AND_SAFE_UPDATES.md): Strategi 5 lapis proteksi data, skema non-destruktif, snapshot 1-klik, dan prosedur update tanpa kehilangan data.
 
 ---
 
@@ -93,12 +94,12 @@ Aplikasi telah divalidasi menggunakan test suite komprehensif di [`tests/verify_
 [PASS] 1. GET /login - HTTP 200
 [PASS] 1b. CSRF Token extraction
 [PASS] 2. POST /login (Super Admin) - Super Admin logged in
-[PASS] 21 Module HTTP 200 Verification (POS, Orders, Pricing, Quotes, Customers, Products, Design, Production, QC, Machines, Inventory, Purchasing, Cash Shifts, Payments, Expenses, Journals, Financial Reports, HR, Attendance, Payroll, Delivery, Promotions, WhatsApp, Branches, Users, Audit Logs)
+[PASS] 21 Module HTTP 200 Verification (POS, Orders, Pricing, Quotes, Customers, Products, Design, Production, QC, Machines, Inventory, Purchasing, Cash Shifts, Payments, Expenses, Journals, Financial Reports, HR, Attendance, Payroll, Delivery, Promotions, WhatsApp, Branches, Users, Audit Logs, Database Backup & Restore)
 [PASS] Public Customer Portal Tracking & Online Order Store
 [PASS] Multi-Branch Switching Context
 [PASS] CSV Sales Export Generation
 [PASS] Full Database SQL Dump Download
 ====================================================
-SUMMARY: 42 PASSED, 0 FAILED (100% SUCCESS RATE)
+SUMMARY: 43 PASSED, 0 FAILED (100% SUCCESS RATE)
 ====================================================
 ```
