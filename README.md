@@ -37,10 +37,11 @@ Aplikasi ini mencakup seluruh 21 modul sesuai spesifikasi wajib **Technical Blue
 ## 🛠️ Tumpukan Teknologi (Tech Stack)
 
 - **Backend**: PHP Native 8.2+ (Modular MVC, Service Layer, OOP, Tanpa Framework Berat)
-- **Database**: MariaDB 10.5+ / MySQL 8.0+ (InnoDB, Transaksi ACID, 62 Tabel Berelasi)
+- **Database Utama**: **SQLite** (Default Out-of-the-Box, Zero-Configuration, ACID WAL Mode, 62 Tabel Berelasi)
+- **Database Alternatif**: MariaDB 10.5+ / MySQL 8.0+ (Dual-Driver Compatibility via `.env`)
 - **Frontend**: Bootstrap 5.3, Bootstrap Icons, JavaScript (Vanilla ES6), HTML5 Canvas
 - **PWA**: Web App Manifest, Service Worker Caching, Offline Fallback
-- **Kompatibilitas Server**: 100% Shared Hosting Ready (cPanel, DirectAdmin, Apache mod_rewrite, Nginx)
+- **Kompatibilitas Server**: 100% Shared Hosting Ready (cPanel, DirectAdmin, Apache mod_rewrite, Nginx, Local PHP Server)
 
 ---
 
@@ -62,8 +63,10 @@ Dokumentasi teknis dan operasional lengkap tersedia di direktori `docs/`:
 
 ## ⚡ Memulai Cepat (Quick Start)
 
-### 1. Menjalankan Server Lokal
-Pastikan MariaDB/MySQL telah aktif, lalu jalankan perintah berikut di root folder:
+### 1. Zero-Configuration dengan SQLite (Bawaan)
+Tidak perlu menginstall atau membuat database MySQL! Aplikasi secara otomatis mendeteksi dan menginisialisasi database SQLite terenkripsi ACID pada saat pertama kali dijalankan.
+
+Cukup jalankan perintah berikut di terminal:
 ```bash
 php -S 127.0.0.1:8080 -t public public/index.php
 ```
@@ -80,6 +83,14 @@ http://127.0.0.1:8080/login
 - **Kasir Jakarta**: `kasir.jkt` / `password123`
 - **Kasir Surabaya**: `kasir.sby` / `password123`
 - **Portal Pelanggan Publik**: Akses langsung tanpa login di `http://127.0.0.1:8080/customer-portal`
+
+### 4. Jaminan Keamanan Data ("Data Tidak Pernah Hilang")
+Aplikasi menerapkan arsitektur perlindungan data 5 lapis:
+1. **File Database Terisolasi**: File `database/printmaster.sqlite` diabaikan dari git (`.gitignore`), sehingga aktivitas modifikasi kode, ganti tampilan, atau `git pull` tidak akan pernah menimpa atau menghapus data transaksi operasional.
+2. **Inisialisasi Non-Destruktif**: Tidak ada perintah `DROP TABLE`. Inisialisasi otomatis hanya berjalan jika file database kosong (0 tabel).
+3. **WAL Concurrency & Integrity**: Mode SQLite Write-Ahead Logging (`PRAGMA journal_mode = WAL;`) dan `busy_timeout = 5000` mencegah *database lock* dan kerusakan berkas.
+4. **Cadangan Otomatis Sebelum Migrasi**: Sistem secara otomatis membuat berkas snapshot cadangan ke `storage/backups/` sebelum pembaruan skema dijalankan.
+5. **Cadangan 1-Klik & Auto-Pruning Cron**: Modul Backup menyediakan unduhan cadangan berkas `.sqlite` dan dump `.sql`, serta skrip CLI `cli/backup.php` untuk cron job harian cPanel.
 
 ---
 

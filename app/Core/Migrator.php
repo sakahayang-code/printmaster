@@ -9,13 +9,15 @@ namespace App\Core;
  */
 class Migrator {
     private static function initTable(): void {
+        $idCol = Database::isSqlite() ? "id INTEGER PRIMARY KEY AUTOINCREMENT" : "id INT AUTO_INCREMENT PRIMARY KEY";
+        $engine = Database::isSqlite() ? "" : "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
         Database::query("
             CREATE TABLE IF NOT EXISTS migrations (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                {$idCol},
                 migration VARCHAR(255) NOT NULL UNIQUE,
                 batch INT NOT NULL,
                 executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ) {$engine}
         ");
     }
 
@@ -58,6 +60,20 @@ class Migrator {
         $currentBatch = $lastBatch + 1;
         $dir = dirname(__DIR__, 2) . '/database/migrations';
         $migrated = [];
+
+        // Safety backup before applying migrations
+        if (Database::isSqlite()) {
+            $dbConfig = \App\Config\Database::getConfig();
+            $dbPath = $dbConfig['database'];
+            if (file_exists($dbPath)) {
+                $backupDir = dirname(__DIR__, 2) . '/storage/backups';
+                if (!is_dir($backupDir)) {
+                    mkdir($backupDir, 0755, true);
+                }
+                $backupFile = $backupDir . '/printmaster_pre_migration_' . date('Ymd_His') . '.sqlite';
+                copy($dbPath, $backupFile);
+            }
+        }
 
         foreach ($pending as $file) {
             $path = $dir . '/' . $file;

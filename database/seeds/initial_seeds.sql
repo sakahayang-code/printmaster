@@ -203,26 +203,24 @@ SELECT 14, id FROM permissions WHERE code IN (
 );
 
 -- 8. USERS (Semua akun passwordnya: password123)
--- Hash bcrypt untuk password123
-SET @pwd = 'y0.9vb4G5PTnW';
-
+-- Hash bcrypt untuk password123: $2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy
 INSERT IGNORE INTO users (id, company_id, branch_id, role_id, name, username, email, phone, password_hash, is_active) VALUES
-(1, 1, 1, 1, 'Super Administrator', 'admin', 'admin@printmaster.id', '0811000001', @pwd, 1),
-(2, 1, 1, 2, 'Ir. Hendra Wijaya (Owner)', 'owner', 'owner@printmaster.id', '0811000002', @pwd, 1),
-(3, 1, 1, 3, 'Bambang Sudiro (Kepala Cabang Jakarta)', 'kacab.jkt', 'kacab.jkt@printmaster.id', '0811000003', @pwd, 1),
-(4, 1, 2, 3, 'Dewi Lestari (Kepala Cabang Surabaya)', 'kacab.sby', 'kacab.sby@printmaster.id', '0811000004', @pwd, 1),
-(5, 1, 1, 4, 'Rina Marlina (Kasir Jakarta)', 'kasir.jkt', 'kasir.jkt@printmaster.id', '0811000005', @pwd, 1),
-(6, 1, 2, 4, 'Andi Saputra (Kasir Surabaya)', 'kasir.sby', 'kasir.sby@printmaster.id', '0811000006', @pwd, 1),
-(7, 1, 1, 5, 'Dimas Anggoro (Desainer Grafis)', 'desainer1', 'desainer@printmaster.id', '0811000007', @pwd, 1),
-(8, 1, 1, 6, 'Eko Wahyudi (Manajer Produksi)', 'prodman', 'prodman@printmaster.id', '0811000008', @pwd, 1),
-(9, 1, 1, 7, 'Joko Susilo (Operator Cetak)', 'operator1', 'operator@printmaster.id', '0811000009', @pwd, 1),
-(10, 1, 1, 8, 'Fajar Nugraha (Petugas QC)', 'qc1', 'qc@printmaster.id', '0811000010', @pwd, 1),
-(11, 1, 1, 9, 'Agus Santoso (Staf Gudang)', 'gudang1', 'gudang@printmaster.id', '0811000011', @pwd, 1),
-(12, 1, 1, 10, 'Siska Amelia (Staf Purchasing)', 'purchasing1', 'purchasing@printmaster.id', '0811000012', @pwd, 1),
-(13, 1, 1, 11, 'Wahyu Hidayat (Finance & Akuntansi)', 'akuntan1', 'akuntan@printmaster.id', '0811000013', @pwd, 1),
-(14, 1, 1, 12, 'Maya Puspita (HRD Admin)', 'hrd1', 'hrd@printmaster.id', '0811000014', @pwd, 1),
-(15, 1, 1, 13, 'Rudi Hermawan (Kurir Ekspedisi)', 'kurir1', 'kurir@printmaster.id', '0811000015', @pwd, 1),
-(16, 1, 1, 14, 'Budi Santoso (Akun Pelanggan)', 'budi.santoso', 'budi@gmail.com', '081234567890', @pwd, 1);
+(1, 1, 1, 1, 'Super Administrator', 'admin', 'admin@printmaster.id', '0811000001', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(2, 1, 1, 2, 'Ir. Hendra Wijaya (Owner)', 'owner', 'owner@printmaster.id', '0811000002', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(3, 1, 1, 3, 'Bambang Sudiro (Kepala Cabang Jakarta)', 'kacab.jkt', 'kacab.jkt@printmaster.id', '0811000003', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(4, 1, 2, 3, 'Dewi Lestari (Kepala Cabang Surabaya)', 'kacab.sby', 'kacab.sby@printmaster.id', '0811000004', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(5, 1, 1, 4, 'Rina Marlina (Kasir Jakarta)', 'kasir.jkt', 'kasir.jkt@printmaster.id', '0811000005', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(6, 1, 2, 4, 'Andi Saputra (Kasir Surabaya)', 'kasir.sby', 'kasir.sby@printmaster.id', '0811000006', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(7, 1, 1, 5, 'Dimas Anggoro (Desainer Grafis)', 'desainer1', 'desainer@printmaster.id', '0811000007', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(8, 1, 1, 6, 'Eko Wahyudi (Manajer Produksi)', 'prodman', 'prodman@printmaster.id', '0811000008', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(9, 1, 1, 7, 'Joko Susilo (Operator Cetak)', 'operator1', 'operator@printmaster.id', '0811000009', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(10, 1, 1, 8, 'Fajar Nugraha (Petugas QC)', 'qc1', 'qc@printmaster.id', '0811000010', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(11, 1, 1, 9, 'Agus Santoso (Staf Gudang)', 'gudang1', 'gudang@printmaster.id', '0811000011', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(12, 1, 1, 10, 'Siska Amelia (Staf Purchasing)', 'purchasing1', 'purchasing@printmaster.id', '0811000012', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(13, 1, 1, 11, 'Wahyu Hidayat (Finance & Akuntansi)', 'akuntan1', 'akuntan@printmaster.id', '0811000013', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(14, 1, 1, 12, 'Maya Puspita (HRD Admin)', 'hrd1', 'hrd@printmaster.id', '0811000014', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(15, 1, 1, 13, 'Rudi Hermawan (Kurir Ekspedisi)', 'kurir1', 'kurir@printmaster.id', '0811000015', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1),
+(16, 1, 1, 14, 'Budi Santoso (Akun Pelanggan)', 'budi.santoso', 'budi@gmail.com', '081234567890', '$2y$10$4BSBcCyF9TOSFOn.GMBnGeBasaMVUqvc.Ajd.NerqQZlbofFb5RFy', 1);
 
 -- User Branch Multi-assignment
 INSERT IGNORE INTO user_branches (user_id, branch_id) VALUES

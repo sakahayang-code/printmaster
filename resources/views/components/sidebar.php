@@ -3,10 +3,12 @@ use App\Core\Auth;
 use App\Core\Request;
 
 $uri = Request::uri();
-function isActive($path, $current) {
-    if ($path === '/' && $current === '/') return 'active';
-    if ($path !== '/' && strpos($current, $path) === 0) return 'active';
-    return '';
+if (!function_exists('isActive')) {
+    function isActive($path, $current) {
+        if ($path === '/' && $current === '/') return 'active';
+        if ($path !== '/' && strpos($current, $path) === 0) return 'active';
+        return '';
+    }
 }
 ?>
 <div id="sidebar-wrapper">

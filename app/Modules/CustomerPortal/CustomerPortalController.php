@@ -130,7 +130,7 @@ class CustomerPortalController extends Controller {
 
         // Price calculation
         $unitPrice = (float) $product['base_price'];
-        if ($product['pricing_type'] === 'area' && $width > 0 && $length > 0) {
+        if (($product['pricing_type'] ?? '') === 'area' && $width > 0 && $length > 0) {
             $area = ($width * $length) / 10000; // m2
             $subtotal = $area * $unitPrice * $quantity;
         } else {

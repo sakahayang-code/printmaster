@@ -88,7 +88,7 @@ use App\Helpers\FormatHelper;
                         <div>
                             <small class="text-muted d-block">Mulai dari</small>
                             <strong class="text-primary"><?= FormatHelper::rupiah($p['base_price']) ?></strong>
-                            <small class="text-muted">/ <?= $p['pricing_type'] === 'area' ? 'm²' : 'pcs' ?></small>
+                            <small class="text-muted">/ <?= ($p['pricing_type'] ?? '') === 'area' ? 'm²' : 'pcs' ?></small>
                         </div>
                         <a href="/customer-portal/order?product_id=<?= $p['id'] ?>" class="btn btn-outline-primary btn-sm rounded-circle" title="Pesan Ini">
                             <i class="bi bi-arrow-right"></i>

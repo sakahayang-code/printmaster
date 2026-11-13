@@ -235,14 +235,26 @@ class CompanyController extends Controller {
         $tables = Database::fetchAll("SHOW TABLES");
         $tableCount = count($tables);
 
-        $sizeRow = Database::fetch("
-            SELECT 
-                COUNT(*) as table_count,
-                ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS total_size_mb,
-                SUM(table_rows) as approx_rows
-            FROM information_schema.tables 
-            WHERE table_schema = :dbname
-        ", ['dbname' => $dbName]);
+        if (Database::isSqlite()) {
+            $dbFile = $dbConfig['database'];
+            $totalSizeMb = file_exists($dbFile) ? round(filesize($dbFile) / 1024 / 1024, 2) : 0;
+            $approxRows = 0;
+            foreach ($tables as $tRow) {
+                $tName = $tRow['name'] ?? $tRow['Tables_in_printmaster'] ?? reset($tRow);
+                $approxRows += (int) Database::fetchColumn("SELECT COUNT(*) FROM `{$tName}`");
+            }
+        } else {
+            $sizeRow = Database::fetch("
+                SELECT 
+                    COUNT(*) as table_count,
+                    ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS total_size_mb,
+                    SUM(table_rows) as approx_rows
+                FROM information_schema.tables 
+                WHERE table_schema = :dbname
+            ", ['dbname' => $dbName]);
+            $totalSizeMb = $sizeRow['total_size_mb'] ?? '0.00';
+            $approxRows = $sizeRow['approx_rows'] ?? 0;
+        }
 
         $backupDir = dirname(__DIR__, 3) . '/storage/backups';
         if (!is_dir($backupDir)) {
@@ -273,8 +285,8 @@ class CompanyController extends Controller {
         $this->view('company/backup', [
             'title'              => 'Cadangan & Pemulihan Basis Data (Backup & Restore)',
             'tableCount'         => $tableCount,
-            'totalSizeMb'        => $sizeRow['total_size_mb'] ?? '0.00',
-            'approxRows'         => $sizeRow['approx_rows'] ?? 0,
+            'totalSizeMb'        => $totalSizeMb,
+            'approxRows'         => $approxRows,
             'backups'            => $backups,
             'pendingMigrations'  => $pendingMigrations,
             'executedMigrations' => $executedMigrations,

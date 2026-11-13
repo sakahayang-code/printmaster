@@ -57,47 +57,37 @@ Untuk keamanan tingkat enterprise, letakkan kode logika di luar root publik:
 
 ## 3. Langkah Demi Langkah Instalasi Melalui cPanel
 
-### Langkah 1: Buat Database MySQL & Pengguna
-1. Masuk ke dashboard cPanel Anda.
-2. Buka menu **MySQL® Database Wizard**.
-3. Masukkan nama database (misal: `cpaneluser_printmaster`).
-4. Buat pengguna database (misal: `cpaneluser_pmuser`) dengan kata sandi yang kuat.
-5. Centang **ALL PRIVILEGES** (Semua Hak Akses), lalu klik *Next Step*.
-
-### Langkah 2: Impor Skema & Data Awal via phpMyAdmin
-1. Kembali ke cPanel, buka menu **phpMyAdmin**.
-2. Pilih database yang baru saja dibuat di bilah sisi kiri.
-3. Klik tab **Import** di bagian atas:
-   - Unggah berkas [`database/printmaster.sql`](file:///home/antigravity/database/printmaster.sql), lalu klik **Go**.
-   - Setelah sukses, klik tab **Import** kembali dan unggah [`database/seeds/initial_seeds.sql`](file:///home/antigravity/database/seeds/initial_seeds.sql), lalu klik **Go**.
-4. Pastikan 62 tabel berhasil tercipta dan terisi data awal.
-
-### Langkah 3: Unggah dan Ekstrak Berkas
-1. Buka menu **File Manager** di cPanel.
-2. Masuk ke direktori tujuan (misal: `public_html`).
-3. Klik tombol **Upload**, pilih berkas `printmaster.zip`, dan tunggu hingga proses unggah selesai (indikator bar hijau 100%).
+### Langkah 1: Unggah dan Ekstrak Berkas
+1. Buka menu **File Manager** di cPanel Anda.
+2. Masuk ke direktori tujuan (misal: `public_html` atau direktori subdomain).
+3. Klik tombol **Upload**, pilih berkas `printmaster.zip`, dan tunggu hingga indikator berwarna hijau (100%).
 4. Klik kanan berkas zip yang telah diunggah, lalu pilih **Extract**.
 
-### Langkah 4: Sesuaikan Konfigurasi Koneksi Database
-1. Buka folder `app/Config/`.
-2. Klik kanan berkas [`Database.php`](file:///home/antigravity/app/Config/Database.php) dan pilih **Edit**.
-3. Masukkan kredensial database cPanel Anda:
-   ```php
-   return [
-       'host'     => 'localhost',     // Di shared hosting biasanya localhost
-       'port'     => 3306,
-       'database' => 'cpaneluser_printmaster',
-       'username' => 'cpaneluser_pmuser',
-       'password' => 'PasswordDatabaseKuatAnda123!',
-       'charset'  => 'utf8mb4',
-       'options'  => [
-           \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-           \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-           \PDO::ATTR_EMULATE_PREPARES   => false,
-       ]
-   ];
+### Langkah 2: Pilihan Database
+
+#### Pilihan A: SQLite (Default - Paling Praktis & Tanpa Perlu Setup Database)
+Aplikasi PRINTMASTER menggunakan **SQLite** secara bawaan:
+- **TIDAK PERLU** membuat database MySQL di cPanel.
+- **TIDAK PERLU** membuat user database atau mengimpor SQL manual di phpMyAdmin.
+- Pada saat Anda membuka domain di browser untuk pertama kali, sistem secara otomatis menginisialisasi skema 62 tabel dan data awal di `database/printmaster.sqlite`.
+- File database disimpan secara aman di server dan diabaikan dari Git, sehingga setiap kali Anda memperbarui kode program (`.php`, tampilan, styling), **seluruh data transaksi bisnis dan akun pengguna Anda TIDAK PERNAH HILANG**.
+
+#### Pilihan B: MySQL / MariaDB (Alternatif)
+Jika hosting Anda mensyaratkan server database MySQL terpisah:
+1. Buka menu **MySQL® Database Wizard** di cPanel.
+2. Buat database (misal: `user_printmaster`) dan pengguna dengan hak akses penuh (*ALL PRIVILEGES*).
+3. Buka **phpMyAdmin**, pilih database tersebut, dan impor berturut-turut:
+   - [`database/printmaster.sql`](file:///home/antigravity/database/printmaster.sql)
+   - [`database/seeds/initial_seeds.sql`](file:///home/antigravity/database/seeds/initial_seeds.sql)
+4. Buat berkas `.env` di direktori utama:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_DATABASE=user_printmaster
+   DB_USERNAME=user_dbuser
+   DB_PASSWORD=PasswordKuatAnda123!
    ```
-4. Simpan perubahan (*Save Changes*).
 
 ### Langkah 5: Atur Izin Berkas (File Permissions)
 1. Di cPanel File Manager, periksa folder `public/uploads`.

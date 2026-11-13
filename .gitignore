@@ -31,3 +31,10 @@ config/database.local.php
 # Backups (SQL dumps)
 storage/backups/*
 !storage/backups/.gitkeep
+
+# SQLite Database & WAL Journals (Preserves production data across git pulls/code modifications)
+database/*.sqlite
+database/*.sqlite-journal
+database/*.sqlite-wal
+database/*.sqlite-shm
+!database/printmaster.sqlite.example

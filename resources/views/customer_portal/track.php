@@ -106,11 +106,11 @@ use App\Helpers\FormatHelper;
                             <tr>
                                 <td>
                                     <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
-                                    <?php if ($item['notes']): ?>
+                                    <?php if (!empty($item['notes'])): ?>
                                     <small class="text-muted"><?= htmlspecialchars($item['notes']) ?></small>
                                     <?php endif; ?>
                                 </td>
-                                <td class="small"><?= $item['width'] > 0 ? "{$item['width']} x {$item['length']} cm" : '-' ?></td>
+                                <td class="small"><?= (!empty($item['width']) && $item['width'] > 0) ? "{$item['width']} x {$item['length']} cm" : '-' ?></td>
                                 <td class="text-center"><?= number_format($item['quantity']) ?></td>
                                 <td class="text-end text-muted small"><?= FormatHelper::rupiah($item['unit_price']) ?></td>
                                 <td class="text-end fw-semibold"><?= FormatHelper::rupiah($item['subtotal']) ?></td>

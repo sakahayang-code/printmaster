@@ -7,9 +7,11 @@ Panduan ini memandu Anda dalam melakukan instalasi dan menjalankan aplikasi **PR
 ## 1. Kebutuhan Sistem Minimum
 
 - **PHP**: Versi 8.1, 8.2, atau 8.3.
-- **Database**: MariaDB 10.4+ atau MySQL 5.7 / 8.0+.
+- **Database**:
+  - **SQLite 3** (Bawaan / Rekomendasi): Tersedia langsung di PHP (`pdo_sqlite`), tanpa perlu server terpisah.
+  - **MariaDB 10.4+ / MySQL 8.0+** (Opsional): Jika ingin menggunakan engine MySQL terpusat.
 - **Ekstensi PHP Wajib**:
-  - `pdo_mysql`
+  - `pdo_sqlite` (atau `pdo_mysql` jika menggunakan MySQL)
   - `mbstring`
   - `json`
   - `curl`
@@ -28,40 +30,31 @@ Salin seluruh berkas proyek PRINTMASTER ke dalam folder root web server Anda:
 - **Laragon (Windows)**: `C:\laragon\www\printmaster`
 - **Linux / macOS**: `/var/www/html/printmaster` atau folder kerja Anda.
 
-### Langkah 2: Buat Database & Impor Skema
-1. Buka antarmuka phpMyAdmin (`http://localhost/phpmyadmin`) atau terminal MySQL.
-2. Buat database baru bernama `printmaster` dengan collation `utf8mb4_unicode_ci`:
-   ```sql
-   CREATE DATABASE printmaster CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-   ```
-3. Impor berkas skema dan data awal secara berurutan:
-   - **Skema 62 Tabel**: [`database/printmaster.sql`](file:///home/antigravity/database/printmaster.sql)
-   - **Data Seed Awal**: [`database/seeds/initial_seeds.sql`](file:///home/antigravity/database/seeds/initial_seeds.sql)
+### Langkah 2: Opsi Database
 
-   *Atau jalankan melalui perintah terminal:*
+#### Opsi A: SQLite (Default - Paling Cepat & Zero Setup)
+Anda **TIDAK PERLU** membuat database apapun!
+Sistem secara otomatis akan mendeteksi dan menginisialisasi skema 62 tabel beserta data awal (*seeds*) di `database/printmaster.sqlite` pada saat Anda pertama kali mengakses aplikasi di browser.
+> [!NOTE]
+> File `database/printmaster.sqlite` diabaikan oleh Git, sehingga data transaksi Anda akan tetap 100% aman dan tidak akan hilang meskipun kode program diperbarui atau ditarik (*pull*) dari Git.
+
+#### Opsi B: MariaDB / MySQL (Opsional)
+Jika Anda ingin menggunakan MariaDB/MySQL:
+1. Buat database baru bernama `printmaster` di phpMyAdmin.
+2. Buat file `.env` di direktori utama:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=printmaster
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+3. Impor skema dan data awal:
    ```bash
    mysql -u root -p printmaster < database/printmaster.sql
    mysql -u root -p printmaster < database/seeds/initial_seeds.sql
    ```
-
-### Langkah 3: Konfigurasi Database
-Buka berkas konfigurasi database di [`app/Config/Database.php`](file:///home/antigravity/app/Config/Database.php):
-
-```php
-return [
-    'host'     => '127.0.0.1',
-    'port'     => 3306,
-    'database' => 'printmaster',
-    'username' => 'root',        // Sesuaikan username database lokal Anda
-    'password' => '',            // Sesuaikan password database lokal Anda
-    'charset'  => 'utf8mb4',
-    'options'  => [
-        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-        \PDO::ATTR_EMULATE_PREPARES   => false,
-    ]
-];
-```
 
 ### Langkah 4: Atur Izin Folder (Permissions)
 Pastikan folder upload berkas memiliki hak akses tulis:
