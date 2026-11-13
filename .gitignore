@@ -1,0 +1,24 @@
+# Environment & Database Binaries
+.mariadb_bin/
+.mariadb_data/
+.gemini
+.local/
+bin/
+upload/
+PrintMaster_Blueprint_Teknis_Lengkap.docx
+
+# Linux System Files
+.bash_logout
+.bashrc
+.profile
+.gitconfig
+
+# Storage & Temp
+storage/logs/*
+!storage/logs/.gitkeep
+storage/cache/*
+!storage/cache/.gitkeep
+
+# Uploads
+public/uploads/*
+!public/uploads/.gitkeep
