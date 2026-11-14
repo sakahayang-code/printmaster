@@ -129,15 +129,20 @@ use App\Core\CSRF;
 <script>
 function runCalc() {
     const sel = document.getElementById('calcProduct');
+    if (!sel || !sel.options || sel.selectedIndex < 0) return;
     const opt = sel.options[sel.selectedIndex];
+    if (!opt) return;
+
     const mode = opt.getAttribute('data-mode');
-    
-    document.getElementById('calcDimRow').style.display = (mode === 'area_sqm') ? 'flex' : 'none';
+    const dimRow = document.getElementById('calcDimRow');
+    if (dimRow) {
+        dimRow.style.display = (mode === 'area_sqm') ? 'flex' : 'none';
+    }
 
     const prodId = opt.value;
-    const w = parseFloat(document.getElementById('calcWidth').value) || 0;
-    const h = parseFloat(document.getElementById('calcHeight').value) || 0;
-    const qty = parseFloat(document.getElementById('calcQty').value) || 1;
+    const w = parseFloat(document.getElementById('calcWidth')?.value) || 0;
+    const h = parseFloat(document.getElementById('calcHeight')?.value) || 0;
+    const qty = parseFloat(document.getElementById('calcQty')?.value) || 1;
 
     let finIds = [];
     document.querySelectorAll('.calc-fin:checked').forEach(cb => finIds.push(cb.value));
@@ -157,18 +162,41 @@ function runCalc() {
             finishing_ids: finIds
         })
     })
-    .then(r => r.json())
+    .then(r => {
+        if (!r.ok) {
+            console.warn('Pricing calculation HTTP status:', r.status);
+        }
+        return r.json();
+    })
     .then(data => {
-        document.getElementById('resSellingPrice').innerText = 'Rp ' + Math.round(data.selling_subtotal).toLocaleString('id-ID');
-        document.getElementById('resUnitPrice').innerText = 'Rp ' + Math.round(data.unit_price).toLocaleString('id-ID');
-        document.getElementById('resArea').innerText = (data.area_sqm > 0) ? (data.area_sqm + ' m² (' + data.width_cm + 'x' + data.height_cm + ' cm)') : '-';
-        document.getElementById('resRawCost').innerText = 'Rp ' + Math.round(data.subtotal_base * 0.40).toLocaleString('id-ID');
-        document.getElementById('resFinishingCost').innerText = 'Rp ' + Math.round(data.finishing_total).toLocaleString('id-ID');
-        document.getElementById('resWastePct').innerText = data.waste_pct;
-        document.getElementById('resWasteCost').innerText = 'Rp ' + Math.round(data.waste_cost).toLocaleString('id-ID');
-        document.getElementById('resOverhead').innerText = 'Rp ' + Math.round(data.setup_cost + data.overhead_cost).toLocaleString('id-ID');
-        document.getElementById('resTotalHPP').innerText = 'Rp ' + Math.round(data.cost_estimate_total).toLocaleString('id-ID');
-        document.getElementById('resMargin').innerText = 'Rp ' + Math.round(data.estimated_gross_margin).toLocaleString('id-ID');
+        if (!data || data.error) {
+            console.error('Pricing calculation error:', data ? data.error : 'Unknown error');
+            return;
+        }
+
+        const sellingSub = parseFloat(data.selling_subtotal) || 0;
+        const unitPrice = parseFloat(data.unit_price) || 0;
+        const rawCost = (parseFloat(data.subtotal_base) || 0) * 0.40;
+        const finishingCost = parseFloat(data.finishing_total) || 0;
+        const wastePct = (data.waste_pct !== undefined && data.waste_pct !== null) ? data.waste_pct : 0;
+        const wasteCost = parseFloat(data.waste_cost) || 0;
+        const overhead = (parseFloat(data.setup_cost) || 0) + (parseFloat(data.overhead_cost) || 0);
+        const totalHPP = parseFloat(data.cost_estimate_total) || 0;
+        const margin = parseFloat(data.estimated_gross_margin) || 0;
+
+        document.getElementById('resSellingPrice').innerText = 'Rp ' + Math.round(sellingSub).toLocaleString('id-ID');
+        document.getElementById('resUnitPrice').innerText = 'Rp ' + Math.round(unitPrice).toLocaleString('id-ID');
+        document.getElementById('resArea').innerText = (parseFloat(data.area_sqm) > 0) ? (data.area_sqm + ' m² (' + (data.width_cm || 0) + 'x' + (data.height_cm || 0) + ' cm)') : '-';
+        document.getElementById('resRawCost').innerText = 'Rp ' + Math.round(rawCost).toLocaleString('id-ID');
+        document.getElementById('resFinishingCost').innerText = 'Rp ' + Math.round(finishingCost).toLocaleString('id-ID');
+        document.getElementById('resWastePct').innerText = wastePct;
+        document.getElementById('resWasteCost').innerText = 'Rp ' + Math.round(wasteCost).toLocaleString('id-ID');
+        document.getElementById('resOverhead').innerText = 'Rp ' + Math.round(overhead).toLocaleString('id-ID');
+        document.getElementById('resTotalHPP').innerText = 'Rp ' + Math.round(totalHPP).toLocaleString('id-ID');
+        document.getElementById('resMargin').innerText = 'Rp ' + Math.round(margin).toLocaleString('id-ID');
+    })
+    .catch(err => {
+        console.error('Pricing calculation error:', err);
     });
 }
 

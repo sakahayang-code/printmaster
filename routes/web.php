@@ -76,9 +76,12 @@ Router::get('/orders/{id}/work-order', [OrderController::class, 'workOrder'], [A
 // ==========================================
 Router::get('/pricing', [PricingController::class, 'index'], [AuthMiddleware::class]);
 Router::post('/pricing/calculate', [PricingController::class, 'calculateAjax'], [AuthMiddleware::class]);
+Router::post('/pricing/calculate-ajax', [PricingController::class, 'calculateAjax'], [AuthMiddleware::class]);
 Router::get('/quotes', [PricingController::class, 'quotes'], [AuthMiddleware::class]);
 Router::get('/quotes/create', [PricingController::class, 'createQuote'], [AuthMiddleware::class]);
 Router::post('/quotes/store', [PricingController::class, 'storeQuote'], [AuthMiddleware::class]);
+Router::post('/quotes/{id}/convert', [PricingController::class, 'convertToOrder'], [AuthMiddleware::class]);
+Router::post('/quotes/{id}/convert-order', [PricingController::class, 'convertToOrder'], [AuthMiddleware::class]);
 
 // ==========================================
 // 6. CUSTOMERS & CRM

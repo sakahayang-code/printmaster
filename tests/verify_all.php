@@ -138,6 +138,31 @@ assertTest("Reports: CSV Export", $csvRes['code'] === 200 && strpos($csvRes['bod
 $backupRes = httpReq("{$baseUrl}/backup/download");
 assertTest("Backup: SQL Export", $backupRes['code'] === 200 && strpos($backupRes['body'], 'PRINTMASTER DATABASE BACKUP') !== false, "SQL Backup generated");
 
+// 9. PRICING CALCULATOR AJAX TEST
+$chCalc = curl_init("{$baseUrl}/pricing/calculate-ajax");
+curl_setopt($chCalc, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($chCalc, CURLOPT_COOKIEFILE, $cookieFile);
+curl_setopt($chCalc, CURLOPT_POST, true);
+curl_setopt($chCalc, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    'X-Requested-With: XMLHttpRequest'
+]);
+curl_setopt($chCalc, CURLOPT_POSTFIELDS, json_encode([
+    'product_id' => 1,
+    'width_cm'   => 300,
+    'height_cm'  => 100,
+    'quantity'   => 2,
+    'finishing_ids' => [5]
+]));
+$calcRaw = curl_exec($chCalc);
+$calcCode = curl_getinfo($chCalc, CURLINFO_HTTP_CODE);
+curl_close($chCalc);
+$calcData = json_decode($calcRaw, true);
+
+$calcValid = ($calcCode === 200 && is_array($calcData) && !empty($calcData['selling_subtotal']) && ($calcData['selling_subtotal'] > 0) && isset($calcData['cost_estimate_total']));
+assertTest("Pricing: /pricing/calculate-ajax calculation", $calcValid, "Selling: Rp " . number_format($calcData['selling_subtotal'] ?? 0, 0, ',', '.') . ", HPP: Rp " . number_format($calcData['cost_estimate_total'] ?? 0, 0, ',', '.'));
+
+
 echo "\n====================================================\n";
 echo "SUMMARY: {$testsPassed} PASSED, {$testsFailed} FAILED.\n";
 echo "====================================================\n";

@@ -34,6 +34,10 @@ class PricingController extends Controller {
         $this->json($result);
     }
 
+    public function calculate(): void {
+        $this->calculateAjax();
+    }
+
     public function quotes(): void {
         $this->requirePermission('pricing.calculate');
 
