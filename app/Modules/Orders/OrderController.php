@@ -376,4 +376,20 @@ class OrderController extends Controller {
             'items' => $items
         ], 'print');
     }
+
+    public function receipt(string $id): void {
+        $this->printReceipt($id);
+    }
+
+    public function invoice(string $id): void {
+        $this->printInvoice($id);
+    }
+
+    public function workOrder(string $id): void {
+        $this->printWorkOrder($id);
+    }
+
+    public function pay(string $id): void {
+        $this->addPayment($id);
+    }
 }

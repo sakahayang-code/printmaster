@@ -141,4 +141,8 @@ class POSController extends Controller {
             $this->back();
         }
     }
+
+    public function receipt(string $id): void {
+        (new \App\Modules\Orders\OrderController())->printReceipt($id);
+    }
 }

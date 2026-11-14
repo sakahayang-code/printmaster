@@ -226,4 +226,8 @@ class PurchasingController extends Controller {
             $this->back();
         }
     }
+
+    public function receiveGoods(string $id): void {
+        $this->receive($id);
+    }
 }

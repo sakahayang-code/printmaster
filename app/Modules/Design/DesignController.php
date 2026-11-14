@@ -185,4 +185,8 @@ class DesignController extends Controller {
 
         $this->back();
     }
+
+    public function updateProof(): void {
+        $this->createProof();
+    }
 }

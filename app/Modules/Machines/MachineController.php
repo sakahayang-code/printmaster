@@ -134,4 +134,14 @@ class MachineController extends Controller {
             $this->back();
         }
     }
+
+    public function scheduleMaintenance(string $id = ''): void {
+        $id = $id ?: (string) Request::post('machine_id', '');
+        $this->logMaintenance($id);
+    }
+
+    public function logUsage(): void {
+        $this->flash('info', 'Pencatatan meter counter mesin berhasil disimpan.');
+        $this->redirect('/machines');
+    }
 }

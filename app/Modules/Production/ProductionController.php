@@ -197,4 +197,8 @@ class ProductionController extends Controller {
             $this->back();
         }
     }
+
+    public function delegateBranch(string $id): void {
+        $this->transferBranch($id);
+    }
 }
