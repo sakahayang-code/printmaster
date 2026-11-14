@@ -7,6 +7,9 @@ sakahayang-code/
 bin/
 upload/
 PrintMaster_Blueprint_Teknis_Lengkap.docx
+/*.jpg
+/*.jpeg
+/*.png
 
 # Linux System Files
 .bash_logout

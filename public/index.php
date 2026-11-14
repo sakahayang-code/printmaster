@@ -36,6 +36,9 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Load Global Helper Functions
+require_once dirname(__DIR__) . '/app/Helpers/functions.php';
+
 // Initialize Session
 \App\Core\Session::start();
 

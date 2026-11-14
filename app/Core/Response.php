@@ -10,12 +10,19 @@ class Response {
     }
 
     public static function redirect(string $url): void {
+        $base = Request::basePath();
+        if ($base !== '' && strpos($url, '/') === 0 && strpos($url, '//') !== 0) {
+            $trimmedBase = trim($base, '/');
+            if (!preg_match('#^/' . preg_quote($trimmedBase, '#') . '(/|$)#i', $url)) {
+                $url = '/' . $trimmedBase . $url;
+            }
+        }
         header("Location: {$url}");
         exit;
     }
 
     public static function back(): void {
-        $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+        $referer = $_SERVER['HTTP_REFERER'] ?? (Request::basePath() ?: '/');
         self::redirect($referer);
     }
 }

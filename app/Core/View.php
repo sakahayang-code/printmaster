@@ -24,15 +24,39 @@ class View {
         require $viewFile;
         $content = ob_get_clean();
 
+        ob_start();
         if ($layout) {
             $layoutFile = dirname(__DIR__, 2) . "/resources/views/layouts/{$layout}.php";
             if (file_exists($layoutFile)) {
                 require $layoutFile;
-                return;
+            } else {
+                echo $content;
             }
+        } else {
+            echo $content;
+        }
+        $html = ob_get_clean();
+
+        // Automatically prefix root-relative links & assets for subfolder deployments (e.g. /percetakan)
+        $base = Request::basePath();
+        if ($base !== '') {
+            $html = self::prefixUrls($html, $base);
         }
 
-        echo $content;
+        echo $html;
+    }
+
+    public static function prefixUrls(string $html, string $base): string {
+        if (empty($base)) {
+            return $html;
+        }
+        $trimmed = trim($base, '/');
+        $escaped = preg_quote($trimmed, '#');
+
+        // Replace href="/...", src="/...", action="/..."
+        // Exclude protocol-relative //, and exclude paths already starting with $trimmed/
+        $pattern = '#\b(href|src|action)=(["\'])/(?!/|' . $escaped . '(/|["\']|$))#i';
+        return preg_replace($pattern, '$1=$2/' . $trimmed . '/', $html);
     }
 
     public static function component(string $componentName, array $data = []): void {

@@ -7,6 +7,7 @@
     <!-- Favicon & PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
+    <script>window.APP_BASE_URL = '<?= \App\Core\Request::basePath() ?>';</script>
     <!-- Local Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">

@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#2563eb">
     <link rel="manifest" href="/manifest.json">
     <title><?= htmlspecialchars($title ?? 'Portal Pelanggan - PRINTMASTER') ?></title>
-    
+    <script>window.APP_BASE_URL = '<?= \App\Core\Request::basePath() ?>';</script>
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
     
