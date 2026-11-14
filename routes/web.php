@@ -64,10 +64,12 @@ Router::get('/orders/create', [OrderController::class, 'create'], [AuthMiddlewar
 Router::post('/orders/store', [OrderController::class, 'store'], [AuthMiddleware::class]);
 Router::get('/orders/{id}', [OrderController::class, 'show'], [AuthMiddleware::class]);
 Router::post('/orders/{id}/pay', [OrderController::class, 'pay'], [AuthMiddleware::class]);
+Router::post('/orders/{id}/payments', [OrderController::class, 'pay'], [AuthMiddleware::class]);
 Router::post('/orders/{id}/status', [OrderController::class, 'updateStatus'], [AuthMiddleware::class]);
 Router::get('/orders/{id}/invoice', [OrderController::class, 'invoice'], [AuthMiddleware::class]);
 Router::get('/orders/{id}/receipt', [OrderController::class, 'receipt'], [AuthMiddleware::class]);
 Router::get('/orders/{id}/spk', [OrderController::class, 'workOrder'], [AuthMiddleware::class]);
+Router::get('/orders/{id}/work-order', [OrderController::class, 'workOrder'], [AuthMiddleware::class]);
 
 // ==========================================
 // 5. PRICING & QUOTES
