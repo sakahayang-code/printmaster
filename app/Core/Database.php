@@ -146,6 +146,8 @@ class Database {
             } elseif (preg_match('/^SHOW\s+CREATE\s+TABLE\s+[`"]?([a-zA-Z0-9_]+)[`"]?/i', $trimmed, $m)) {
                 $tbl = $m[1];
                 $sql = "SELECT sql as 'Create Table' FROM sqlite_master WHERE type='table' AND name = " . self::getConnection()->quote($tbl);
+            } elseif (preg_match('/^(UPDATE|DELETE)\b/i', $trimmed) && preg_match('/\s+LIMIT\s+\d+\s*;?$/i', $trimmed)) {
+                $sql = preg_replace('/\s+LIMIT\s+\d+\s*;?$/i', '', $trimmed);
             }
         }
 

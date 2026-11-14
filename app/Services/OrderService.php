@@ -206,7 +206,7 @@ class OrderService {
                 if ($payMethod === 'cash') {
                     Database::query(
                         "UPDATE cash_shifts SET cash_sales = cash_sales + :amt, expected_balance = expected_balance + :amt 
-                         WHERE branch_id = :bid AND status = 'open' LIMIT 1",
+                         WHERE id = (SELECT id FROM cash_shifts WHERE branch_id = :bid AND status = 'open' ORDER BY id DESC LIMIT 1)",
                         ['amt' => $initialPay, 'bid' => $branchId]
                     );
                 }
