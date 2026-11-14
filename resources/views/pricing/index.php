@@ -142,7 +142,8 @@ function runCalc() {
     let finIds = [];
     document.querySelectorAll('.calc-fin:checked').forEach(cb => finIds.push(cb.value));
 
-    fetch('/pricing/calculate-ajax', {
+    const calcUrl = (window.APP_BASE_URL || '') + '/pricing/calculate-ajax';
+    fetch(calcUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -127,7 +127,7 @@ class POSController extends Controller {
                     'order_number'   => $result['order_number'],
                     'invoice_number' => $result['invoice_number'],
                     'total_amount'   => $result['total_amount'],
-                    'receipt_url'    => '/orders/' . $result['order_id'] . '/receipt'
+                    'receipt_url'    => url('/orders/' . $result['order_id'] . '/receipt')
                 ]);
             }
 

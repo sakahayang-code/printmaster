@@ -629,7 +629,8 @@ function processCheckout() {
         items: cart
     };
 
-    fetch('/pos/checkout', {
+    const checkoutUrl = (window.APP_BASE_URL || '') + '/pos/checkout';
+    fetch(checkoutUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -646,7 +647,7 @@ function processCheckout() {
             clearCart();
             // Open print receipt in popup
             window.open(res.receipt_url, '_blank', 'width=450,height=600');
-            window.location.href = '/orders/' + res.order_id;
+            window.location.href = (window.APP_BASE_URL || '') + '/orders/' + res.order_id;
         } else {
             alert('Error: ' + (res.error || 'Terjadi kesalahan'));
         }

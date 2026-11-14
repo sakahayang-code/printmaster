@@ -6,7 +6,18 @@
     <meta name="theme-color" content="#2563eb">
     <link rel="manifest" href="/manifest.json">
     <title><?= htmlspecialchars($title ?? 'Portal Pelanggan - PRINTMASTER') ?></title>
-    <script>window.APP_BASE_URL = '<?= \App\Core\Request::basePath() ?>';</script>
+    <script>
+        window.APP_BASE_URL = '<?= \App\Core\Request::basePath() ?>';
+        if (window.APP_BASE_URL) {
+            const _origFetch = window.fetch;
+            window.fetch = function(url, options) {
+                if (typeof url === 'string' && url.startsWith('/') && !url.startsWith('//') && !url.startsWith(window.APP_BASE_URL + '/')) {
+                    url = window.APP_BASE_URL + url;
+                }
+                return _origFetch.call(this, url, options);
+            };
+        }
+    </script>
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
     
