@@ -13,10 +13,12 @@ if (!function_exists('isActive')) {
 ?>
 <div id="sidebar-wrapper">
     <a href="/dashboard" class="sidebar-brand">
-        <i class="bi bi-printer-fill text-primary fs-3"></i>
+        <div class="sidebar-brand-icon">
+            <i class="bi bi-printer-fill"></i>
+        </div>
         <div>
-            <div class="fw-bold tracking-tight">PRINTMASTER</div>
-            <div class="text-xs text-muted fw-normal" style="font-size: 0.68rem; letter-spacing: 0.05em;">ERP PERCETAKAN MULTI-CABANG</div>
+            <div class="sidebar-brand-title">PRINTMASTER</div>
+            <div class="sidebar-brand-sub">ERP MULTI-CABANG</div>
         </div>
     </a>
 
@@ -71,7 +73,7 @@ if (!function_exists('isActive')) {
         <!-- SEKSI DESAIN & PRODUKSI -->
         <div class="sidebar-heading">Desain & Produksi</div>
         <?php if (Auth::hasPermission('design.view')): ?>
-        <a href="/designs" class="nav-link-pm <?= isActive('/designs', $uri) ?>">
+        <a href="/design" class="nav-link-pm <?= (isActive('/design', $uri) || isActive('/designs', $uri)) ?>">
             <i class="bi bi-image"></i>
             <span>File Desain & Proofing</span>
         </a>

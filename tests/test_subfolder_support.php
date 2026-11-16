@@ -61,6 +61,7 @@ $sampleHtml = <<<HTML
 <html>
 <head>
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/css/printmaster.css">
     <link rel="manifest" href="/manifest.json">
 </head>
 <body>
@@ -75,6 +76,7 @@ HTML;
 
 $prefixed = View::prefixUrls($sampleHtml, '/percetakan');
 assertCondition(strpos($prefixed, 'href="/percetakan/assets/css/bootstrap.min.css"') !== false, "CSS link prefixed to /percetakan/assets/css/bootstrap.min.css");
+assertCondition(strpos($prefixed, 'href="/percetakan/assets/css/printmaster.css"') !== false, "PrintMaster CSS link prefixed to /percetakan/assets/css/printmaster.css");
 assertCondition(strpos($prefixed, 'src="/percetakan/assets/js/bootstrap.bundle.min.js"') !== false, "JS script prefixed to /percetakan/assets/js/bootstrap.bundle.min.js");
 assertCondition(strpos($prefixed, 'href="/percetakan/dashboard"') !== false, "Nav link prefixed to /percetakan/dashboard");
 assertCondition(strpos($prefixed, 'href="/percetakan/orders"') !== false && strpos($prefixed, '/percetakan/percetakan') === false, "Already-prefixed link not double-prefixed");

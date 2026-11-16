@@ -101,6 +101,7 @@ Router::post('/products/{id}/update', [ProductController::class, 'update'], [Aut
 // 8. DESIGN FILES & PROOFING
 // ==========================================
 Router::get('/design', [DesignController::class, 'index'], [AuthMiddleware::class]);
+Router::get('/designs', [DesignController::class, 'index'], [AuthMiddleware::class]);
 Router::post('/design/proof', [DesignController::class, 'updateProof'], [AuthMiddleware::class]);
 
 // ==========================================

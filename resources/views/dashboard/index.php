@@ -34,61 +34,61 @@ use App\Core\Auth;
 
 <!-- 4 KARTU STATISTIK UTAMA -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <div class="card card-custom p-3 border-start border-primary border-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card border-start border-primary border-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Omzet Bulan Ini</div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Omzet Bulan Ini</div>
                     <div class="fs-4 fw-bold text-dark mt-1"><?= FormatHelper::rupiah($omzetBulanIni) ?></div>
-                    <div class="text-success small mt-1"><i class="bi bi-calendar-check"></i> Periode <?= date('M Y') ?></div>
+                    <div class="text-success small mt-1 fw-semibold"><i class="bi bi-calendar-check me-1"></i> Periode <?= date('M Y') ?></div>
                 </div>
-                <div class="bg-primary-subtle text-primary p-3 rounded-circle">
-                    <i class="bi bi-cash-stack fs-4"></i>
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-cash-stack"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="card card-custom p-3 border-start border-success border-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card border-start border-success border-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Total Pesanan</div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Total Pesanan</div>
                     <div class="fs-4 fw-bold text-dark mt-1"><?= number_format($totalOrderBulanIni, 0, ',', '.') ?> <span class="fs-6 fw-normal text-muted">Order</span></div>
-                    <div class="text-muted small mt-1"><i class="bi bi-receipt"></i> Transaksi terekam</div>
+                    <div class="text-muted small mt-1"><i class="bi bi-receipt me-1"></i> Transaksi terekam</div>
                 </div>
-                <div class="bg-success-subtle text-success p-3 rounded-circle">
-                    <i class="bi bi-bag-check-fill fs-4"></i>
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-bag-check-fill"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="card card-custom p-3 border-start border-warning border-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card border-start border-warning border-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Sedang Diproduksi</div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Sedang Diproduksi</div>
                     <div class="fs-4 fw-bold text-dark mt-1"><?= number_format($inProductionCount, 0, ',', '.') ?> <span class="fs-6 fw-normal text-muted">Pekerjaan</span></div>
-                    <div class="text-warning-emphasis small mt-1"><i class="bi bi-gear-fill"></i> Jalur cetak & finishing</div>
+                    <div class="text-warning small mt-1 fw-semibold"><i class="bi bi-gear-fill me-1"></i> Jalur cetak & QC</div>
                 </div>
-                <div class="bg-warning-subtle text-warning p-3 rounded-circle">
-                    <i class="bi bi-cpu-fill fs-4"></i>
+                <div class="stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-cpu-fill"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-sm-6 col-xl-3">
-        <div class="card card-custom p-3 border-start border-danger border-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card border-start border-danger border-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div class="text-muted small fw-semibold text-uppercase">Piutang Pelanggan</div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.05em;">Piutang Pelanggan</div>
                     <div class="fs-4 fw-bold text-dark mt-1"><?= FormatHelper::rupiah($totalPiutang) ?></div>
-                    <div class="text-danger small mt-1"><i class="bi bi-clock"></i> Belum lunas</div>
+                    <div class="text-danger small mt-1 fw-semibold"><i class="bi bi-clock me-1"></i> Belum lunas</div>
                 </div>
-                <div class="bg-danger-subtle text-danger p-3 rounded-circle">
-                    <i class="bi bi-hourglass-bottom fs-4"></i>
+                <div class="stat-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-hourglass-bottom"></i>
                 </div>
             </div>
         </div>
@@ -104,7 +104,9 @@ use App\Core\Auth;
                 <span class="badge bg-light text-secondary border">Harian</span>
             </div>
             <div class="card-body">
-                <canvas id="salesTrendChart" height="110"></canvas>
+                <div style="height: 250px; position: relative;">
+                    <canvas id="salesTrendChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
@@ -297,23 +299,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Omzet Penjualan (Rp)',
                     data: <?= json_encode($chartSales) ?>,
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.08)',
                     fill: true,
-                    tension: 0.3,
-                    borderWidth: 2,
+                    tension: 0.35,
+                    borderWidth: 3,
                     pointRadius: 4,
-                    pointBackgroundColor: '#2563eb'
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#4f46e5',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        padding: 10,
+                        cornerRadius: 8,
+                        titleFont: { size: 12, weight: 'bold' },
+                        bodyFont: { size: 13 },
+                        callbacks: {
+                            label: function(context) {
+                                return 'Omzet: Rp ' + context.parsed.y.toLocaleString('id-ID');
+                            }
+                        }
+                    }
                 },
                 scales: {
+                    x: {
+                        grid: { display: false }
+                    },
                     y: {
                         beginAtZero: true,
+                        grid: { color: 'rgba(226, 232, 240, 0.6)' },
                         ticks: {
                             callback: function(val) {
                                 return 'Rp ' + (val / 1000).toLocaleString('id-ID') + 'k';

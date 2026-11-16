@@ -2,11 +2,13 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title><?= htmlspecialchars($title ?? 'Dashboard', ENT_QUOTES, 'UTF-8') ?> - PrintMaster ERP</title>
     <!-- Favicon & PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0b1120">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script>
         window.APP_BASE_URL = '<?= \App\Core\Request::basePath() ?>';
         if (window.APP_BASE_URL) {
@@ -22,141 +24,16 @@
     <!-- Local Bootstrap 5.3 & Icons -->
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
-    <style>
-        :root {
-            --pm-sidebar-bg: #0f172a;
-            --pm-sidebar-hover: #1e293b;
-            --pm-sidebar-active: #2563eb;
-            --pm-sidebar-text: #94a3b8;
-            --pm-sidebar-text-active: #ffffff;
-            --pm-topbar-bg: #ffffff;
-            --pm-body-bg: #f8fafc;
-        }
-        body {
-            background-color: var(--pm-body-bg);
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #1e293b;
-            min-height: 100vh;
-        }
-        #sidebar-wrapper {
-            width: 270px;
-            background: var(--pm-sidebar-bg);
-            color: var(--pm-sidebar-text);
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            overflow-y: auto;
-            z-index: 1040;
-            transition: all 0.3s ease;
-        }
-        #page-content-wrapper {
-            margin-left: 270px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s ease;
-        }
-        .sidebar-brand {
-            padding: 1.25rem 1.5rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #ffffff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-        .sidebar-heading {
-            padding: 1rem 1.5rem 0.4rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: #64748b;
-        }
-        .nav-link-pm {
-            display: flex;
-            align-items: center;
-            gap: 0.85rem;
-            padding: 0.65rem 1.5rem;
-            color: var(--pm-sidebar-text);
-            font-size: 0.88rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.15s ease;
-        }
-        .nav-link-pm:hover {
-            color: var(--pm-sidebar-text-active);
-            background: var(--pm-sidebar-hover);
-        }
-        .nav-link-pm.active {
-            color: var(--pm-sidebar-text-active);
-            background: var(--pm-sidebar-active);
-            border-radius: 0 8px 8px 0;
-            margin-right: 12px;
-        }
-        .topbar {
-            height: 68px;
-            background: var(--pm-topbar-bg);
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.75rem;
-            position: sticky;
-            top: 0;
-            z-index: 1030;
-        }
-        .card-custom {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-            background: #ffffff;
-        }
-        .table-custom th {
-            background-color: #f8fafc;
-            color: #475569;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            font-weight: 600;
-            border-top: none;
-        }
-        .btn-primary {
-            background-color: #2563eb;
-            border-color: #2563eb;
-        }
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-            border-color: #1d4ed8;
-        }
-        @media (max-width: 991.98px) {
-            #sidebar-wrapper {
-                margin-left: -270px;
-            }
-            #sidebar-wrapper.show {
-                margin-left: 0;
-            }
-            #page-content-wrapper {
-                margin-left: 0;
-            }
-        }
-        .offline-bar {
-            background: #ef4444;
-            color: white;
-            text-align: center;
-            padding: 4px;
-            font-size: 0.85rem;
-            display: none;
-        }
-    </style>
+    <!-- PrintMaster Modern Responsive Design System -->
+    <link rel="stylesheet" href="/assets/css/printmaster.css">
 </head>
 <body>
     <div id="offline-indicator" class="offline-bar">
-        <i class="bi bi-wifi-off"></i> Anda sedang berada dalam mode offline. Data transaksi tersimpan lokal dan akan disinkronkan saat online.
+        <i class="bi bi-wifi-off me-1"></i> Anda sedang berada dalam mode offline. Data operasional tersimpan lokal dan akan disinkronkan saat online kembali.
     </div>
+
+    <!-- Mobile Offcanvas Backdrop Overlay -->
+    <div id="sidebar-overlay" aria-hidden="true"></div>
 
     <div class="d-flex" id="wrapper">
         <!-- Sidebar Component -->
@@ -168,7 +45,7 @@
             <?php \App\Core\View::component('topbar', ['activeBranch' => $activeBranch, 'userBranches' => $userBranches, 'currentUser' => $currentUser]); ?>
 
             <!-- Main Body Container -->
-            <main class="container-fluid px-4 py-4 flex-grow-1">
+            <main class="container-fluid px-3 px-md-4 py-4 flex-grow-1">
                 <!-- Alerts / Flash Messages -->
                 <?php \App\Core\View::component('alerts', [
                     'success' => $flashSuccess,
@@ -182,41 +59,105 @@
             </main>
 
             <!-- Footer -->
-            <footer class="bg-white border-top py-3 px-4 text-muted small d-flex justify-content-between align-items-center">
+            <footer class="bg-white border-top py-3 px-3 px-md-4 text-muted small d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
                 <div>
-                    <strong>PRINTMASTER ERP</strong> v1.0 &copy; <?= date('Y') ?> PT Master Grafika Indonesia.
+                    <strong>PRINTMASTER ERP</strong> v2.0 &copy; <?= date('Y') ?> PT Master Grafika Indonesia.
                 </div>
-                <div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
                     <span class="badge bg-light text-dark border">
-                        <i class="bi bi-geo-alt-fill text-primary"></i> <?= htmlspecialchars($activeBranch['name'] ?? 'Pusat') ?>
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i> <?= htmlspecialchars($activeBranch['name'] ?? 'Pusat') ?>
                     </span>
-                    <span class="badge bg-light text-dark border ms-2">
-                        <i class="bi bi-clock"></i> <?= date('d M Y') ?>
+                    <span class="badge bg-light text-dark border">
+                        <i class="bi bi-clock me-1"></i> <?= date('d M Y') ?>
+                    </span>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle">
+                        <i class="bi bi-check-circle-fill me-1"></i> Sistem Aktif
                     </span>
                 </div>
             </footer>
         </div>
     </div>
 
+    <!-- Mobile Bottom Navigation Bar (PWA App Experience for Mobile Users) -->
+    <nav class="mobile-bottom-nav d-lg-none" aria-label="Navigasi Pintas">
+        <?php $currentUri = \App\Core\Request::uri(); ?>
+        <a href="/dashboard" class="mobile-nav-item <?= ($currentUri === '/dashboard' || $currentUri === '/') ? 'active' : '' ?>">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/pos" class="mobile-nav-item <?= ($currentUri === '/pos') ? 'active' : '' ?>">
+            <i class="bi bi-calculator"></i>
+            <span>Kasir</span>
+        </a>
+        <a href="/orders" class="mobile-nav-item <?= (strpos($currentUri, '/orders') === 0 && strpos($currentUri, '/orders/create') === false) ? 'active' : '' ?>">
+            <i class="bi bi-bag-check"></i>
+            <span>Pesanan</span>
+        </a>
+        <a href="/pricing" class="mobile-nav-item <?= (strpos($currentUri, '/pricing') === 0) ? 'active' : '' ?>">
+            <i class="bi bi-calculator-fill"></i>
+            <span>Hitung</span>
+        </a>
+        <button type="button" class="mobile-nav-item border-0 bg-transparent" id="mobileMenuBtn" aria-label="Menu Lengkap">
+            <i class="bi bi-grid-fill"></i>
+            <span>Menu</span>
+        </button>
+    </nav>
+
     <!-- Scripts -->
     <script src="/assets/js/bootstrap.bundle.min.js"></script>
     <script src="/assets/js/chart.umd.min.js"></script>
     <script>
-        // Sidebar toggle for mobile
+        // Sidebar Mobile Offcanvas Controller
+        const sidebarWrapper = document.getElementById('sidebar-wrapper');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
         const sidebarToggle = document.getElementById('sidebarToggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                document.getElementById('sidebar-wrapper').classList.toggle('show');
-            });
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        function openSidebar() {
+            if (sidebarWrapper) sidebarWrapper.classList.add('show');
+            if (sidebarOverlay) sidebarOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
+
+        function closeSidebar() {
+            if (sidebarWrapper) sidebarWrapper.classList.remove('show');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function toggleSidebar() {
+            if (sidebarWrapper && sidebarWrapper.classList.contains('show')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        }
+
+        if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebar);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Close on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebarWrapper && sidebarWrapper.classList.contains('show')) {
+                closeSidebar();
+            }
+        });
+
+        // Auto close when nav item clicked on mobile
+        document.querySelectorAll('.nav-link-pm').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
 
         // Offline / Online Status Detection
         function updateOnlineStatus() {
             const bar = document.getElementById('offline-indicator');
-            if (navigator.onLine) {
-                bar.style.display = 'none';
-            } else {
-                bar.style.display = 'block';
+            if (bar) {
+                bar.style.display = navigator.onLine ? 'none' : 'block';
             }
         }
         window.addEventListener('online', updateOnlineStatus);

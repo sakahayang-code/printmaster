@@ -20,6 +20,7 @@
     </script>
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/assets/css/printmaster.css">
     
     <style>
         :root {

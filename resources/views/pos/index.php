@@ -43,7 +43,7 @@ use App\Core\CSRF;
             <div class="card-body p-3 overflow-auto" style="max-height: 650px;">
                 <div class="row g-2" id="productGrid">
                     <?php foreach ($products as $p): ?>
-                    <div class="col-sm-6 col-md-4 product-item" data-category="<?= $p['category_id'] ?>" data-name="<?= strtolower($p['name'] . ' ' . $p['code']) ?>">
+                    <div class="col-6 col-sm-6 col-md-4 product-item" data-category="<?= $p['category_id'] ?>" data-name="<?= strtolower($p['name'] . ' ' . $p['code']) ?>">
                         <div class="card h-100 border p-2 product-card shadow-sm text-start" 
                              style="cursor: pointer; transition: all 0.15s ease;"
                              onclick="handleProductClick(<?= htmlspecialchars(json_encode($p), ENT_QUOTES, 'UTF-8') ?>)">
@@ -70,7 +70,7 @@ use App\Core\CSRF;
     </div>
 
     <!-- PANEL KANAN: KERANJANG BELANJA & CHECKOUT -->
-    <div class="col-lg-5">
+    <div class="col-lg-5" id="cartSection">
         <div class="card card-custom h-100 d-flex flex-column">
             <div class="card-header bg-white py-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-center">
@@ -135,6 +135,19 @@ use App\Core\CSRF;
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- STICKY MOBILE CART BAR -->
+<div id="mobileCartBar" class="d-lg-none position-fixed start-0 end-0 p-2 bg-white border-top shadow-lg" style="bottom: var(--pm-bottom-nav-height, 64px); z-index: 1025; display: none;">
+    <div class="d-flex justify-content-between align-items-center px-2">
+        <div>
+            <span class="badge bg-primary" id="mobileCartCount">0 Item</span>
+            <span class="fw-bold text-dark ms-2" id="mobileCartTotal">Rp 0</span>
+        </div>
+        <button type="button" class="btn btn-sm btn-primary fw-bold" onclick="document.getElementById('cartSection').scrollIntoView({behavior: 'smooth'})">
+            <i class="bi bi-cart-check me-1"></i> Ke Kasir & Bayar
+        </button>
     </div>
 </div>
 
@@ -566,6 +579,20 @@ function calculateTotals() {
     document.getElementById('txtSubtotal').innerText = 'Rp ' + Math.round(subtotal).toLocaleString('id-ID');
     document.getElementById('txtDiscount').innerText = '- Rp ' + Math.round(discount).toLocaleString('id-ID');
     document.getElementById('txtTotal').innerText = 'Rp ' + Math.round(grandTotal).toLocaleString('id-ID');
+
+    // Update Mobile Sticky Cart Bar
+    const mBar = document.getElementById('mobileCartBar');
+    const mCount = document.getElementById('mobileCartCount');
+    const mTotal = document.getElementById('mobileCartTotal');
+    if (mBar && mCount && mTotal) {
+        if (cart.length > 0) {
+            mBar.style.display = 'block';
+            mCount.innerText = cart.length + ' Item';
+            mTotal.innerText = 'Rp ' + Math.round(grandTotal).toLocaleString('id-ID');
+        } else {
+            mBar.style.display = 'none';
+        }
+    }
 }
 
 function openPaymentModal() {

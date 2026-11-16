@@ -7,7 +7,7 @@ use App\Core\Auth;
         <h3 class="fw-bold mb-1">Pesanan & Penjualan</h3>
         <p class="text-muted small mb-0">Kelola order percetakan, pembayaran, dan pemantauan status pesanan.</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex flex-wrap gap-2">
         <?php if (Auth::isSuperAdmin() || Auth::isOwner()): ?>
             <?php if ($isConsolidated): ?>
                 <a href="/orders" class="btn btn-outline-secondary btn-sm shadow-sm"><i class="bi bi-geo-alt"></i> Filter Cabang Aktif</a>
